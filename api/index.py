@@ -7,6 +7,4 @@ if BASE_DIR not in sys.path:
 
 from vercel import app  # noqa: E402
 
-handler = app
-
-__all__ = ["app", "handler"]
+__all__ = ["app"]
