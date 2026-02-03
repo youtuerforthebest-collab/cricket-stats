@@ -6,7 +6,9 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
+# Vercel serverless is read-only outside /tmp. Use /tmp there.
+IS_VERCEL = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_RUNTIME_API"))
+DATA_DIR = os.path.join("/tmp", "cricket-stats") if IS_VERCEL else os.path.join(BASE_DIR, "data")
 DATA_PATH = os.path.join(DATA_DIR, "stats.json")
 
 
