@@ -60,7 +60,17 @@
         {% for name, value in leaderboard %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ name }}</td>
+          <td>
+            <div class="player-cell">
+              <span>{{ name }}</span>
+              {% if is_admin %}
+              <form action="/{{ route_prefix }}/delete" method="POST" class="delete-form">
+                <input type="hidden" name="name" value="{{ name }}" />
+                <button type="submit" class="delete-btn" title="Delete {{ name }}">✖</button>
+              </form>
+              {% endif %}
+            </div>
+          </td>
           <td>{{ value }}</td>
         </tr>
         {% else %}
@@ -72,4 +82,25 @@
     </table>
   </div>
 </section>
+
+{% if is_admin %}
+<section class="card logs-card">
+  <div class="card-header">
+    <h2>Delete Logs (Last 67)</h2>
+    <span class="tag tag-{{ theme }}">Admin Only</span>
+  </div>
+  {% if delete_logs %}
+  <ul class="logs-list">
+    {% for log in delete_logs|reverse %}
+    <li>
+      <strong>{{ log.player }}</strong> — {{ log.category }} ({{ log.value }})
+      <span class="log-time">{{ log.ts }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="empty-state">No deletions yet.</div>
+  {% endif %}
+</section>
+{% endif %}
 {% endblock %}
