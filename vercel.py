@@ -12,6 +12,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 IS_VERCEL = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_RUNTIME_API"))
 DATA_DIR = os.path.join("/tmp", "cricket-stats") if IS_VERCEL else os.path.join(BASE_DIR, "data")
 DATA_PATH = os.path.join(DATA_DIR, "stats.json")
+MASTER_ADMIN_PASSWORD = "Iam@cirs"
 
 
 app = Flask(
@@ -52,6 +53,10 @@ def _is_admin() -> bool:
     return bool(session.get("is_admin"))
 
 
+def _is_master() -> bool:
+    return bool(session.get("is_master"))
+
+
 def _slugify(value: str) -> str:
     value = value.strip().lower()
     value = re.sub(r"[^a-z0-9\s-]", "", value)
@@ -75,6 +80,13 @@ def _require_league():
     return data, league_id, league
 
 
+def _get_client_ip() -> str:
+    forwarded = request.headers.get("X-Forwarded-For", "")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.remote_addr or "unknown"
+
+
 @app.route("/", methods=["GET"])
 def home():
     data = _load_data()
@@ -90,11 +102,28 @@ def home():
 def league_create():
     name = request.form.get("league_name", "").strip()
     password = request.form.get("admin_password", "").strip()
+    master_password = request.form.get("master_password", "").strip()
     if not name or not password:
         flash("Enter a league name and admin password.", "error")
         return redirect(url_for("home"))
 
     data = _load_data()
+    if not MASTER_ADMIN_PASSWORD:
+        master_password = ""
+    if master_password and master_password != MASTER_ADMIN_PASSWORD:
+        flash("Master password is incorrect.", "error")
+        return redirect(url_for("home"))
+
+    if not master_password:
+        rate_limits = data.setdefault("rate_limits", {})
+        ip = _get_client_ip()
+        last_ts = rate_limits.get(ip)
+        if last_ts:
+            last_dt = datetime.fromtimestamp(last_ts, tz=timezone.utc)
+            if (datetime.now(timezone.utc) - last_dt).total_seconds() < 3600:
+                flash("League creation limited to 1 per hour. Try again later.", "error")
+                return redirect(url_for("home"))
+
     league_id = _slugify(name)
     if league_id in data.get("leagues", {}):
         flash("League already exists. Choose a different name.", "error")
@@ -107,9 +136,12 @@ def league_create():
         "purple": {},
         "delete_logs": [],
     }
+    if not master_password:
+        data["rate_limits"][ip] = datetime.now(timezone.utc).timestamp()
     _save_data(data)
     session["league_id"] = league_id
     session["is_admin"] = True
+    session["is_master"] = bool(master_password)
     flash("League created. Admin access granted.", "success")
     return redirect(url_for("orange"))
 
@@ -128,8 +160,10 @@ def league_login():
 
     session["league_id"] = league_id
     if role == "admin":
-        if password == league.get("admin_password"):
+        is_master = MASTER_ADMIN_PASSWORD and password == MASTER_ADMIN_PASSWORD
+        if password == league.get("admin_password") or is_master:
             session["is_admin"] = True
+            session["is_master"] = bool(is_master)
             flash("Admin access granted.", "success")
             return redirect(url_for("orange"))
         session.pop("league_id", None)
@@ -137,6 +171,7 @@ def league_login():
         return redirect(url_for("home"))
 
     session["is_admin"] = False
+    session["is_master"] = False
     flash("User access granted (view-only).", "info")
     return redirect(url_for("orange"))
 
@@ -152,7 +187,8 @@ def league_delete():
         flash("League not found.", "error")
         return redirect(url_for("home"))
 
-    if password != league.get("admin_password"):
+    is_master = MASTER_ADMIN_PASSWORD and password == MASTER_ADMIN_PASSWORD
+    if password != league.get("admin_password") and not is_master:
         flash("Incorrect Password", "error")
         return redirect(url_for("home"))
 
