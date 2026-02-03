@@ -1,0 +1,273 @@
+@import url("https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap");
+
+:root {
+  --orange: #ff8a3d;
+  --orange-dark: #d86112;
+  --purple: #7a4bff;
+  --purple-dark: #4a2fb8;
+  --ink: #1a1a1a;
+  --muted: #5c5c5c;
+  --bg: #f7f4ef;
+  --card: #ffffff;
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Source Sans 3", sans-serif;
+  background: radial-gradient(circle at top, #fff6e8 0%, #f7f4ef 45%, #f2efe9 100%);
+  color: var(--ink);
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  gap: 16px;
+  background: #fff;
+  border-bottom: 1px solid #ece7de;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--orange), var(--purple));
+  display: grid;
+  place-items: center;
+  font-family: "Kanit", sans-serif;
+  font-weight: 700;
+  color: #fff;
+}
+
+.brand-title {
+  font-family: "Kanit", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.brand-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.site-nav {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.site-nav a {
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid #d8d2c7;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.page {
+  padding: 30px 40px 60px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.landing {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.landing-card,
+.card {
+  background: var(--card);
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.landing-card h2 {
+  margin-top: 0;
+  font-family: "Kanit", sans-serif;
+}
+
+.form-stack {
+  display: grid;
+  gap: 14px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+
+input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ded6c9;
+  font-size: 15px;
+}
+
+.primary-btn,
+.secondary-btn {
+  border: none;
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary-btn {
+  background: var(--orange);
+  color: #fff;
+}
+
+.secondary-btn {
+  background: var(--purple);
+  color: #fff;
+}
+
+.hero {
+  border-radius: 24px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  color: #fff;
+}
+
+.hero-orange {
+  background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+}
+
+.hero-purple {
+  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+}
+
+.admin-panel {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  margin-bottom: 24px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.leaderboard-card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-card th,
+.leaderboard-card td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #efe8dd;
+}
+
+.leaderboard-card th {
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.leaderboard-card tr:hover {
+  background: #fdf8f1;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.tag {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tag-orange {
+  background: rgba(255, 138, 61, 0.15);
+  color: var(--orange-dark);
+}
+
+.tag-purple {
+  background: rgba(122, 75, 255, 0.15);
+  color: var(--purple-dark);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.flash-stack {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.flash {
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.flash-success {
+  background: #e5f7e4;
+  color: #1b6b24;
+}
+
+.flash-error {
+  background: #ffe4e0;
+  color: #9f1f1f;
+}
+
+.flash-info {
+  background: #e8f0ff;
+  color: #23408c;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px 10px;
+}
+
+@media (max-width: 720px) {
+  .site-header {
+    padding: 16px 20px;
+  }
+
+  .page {
+    padding: 20px;
+  }
+
+  .hero {
+    padding: 20px;
+  }
+}

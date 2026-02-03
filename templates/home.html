@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="landing">
+  <div class="landing-card">
+    <h2>Login as Admin</h2>
+    <p>Unlock editing for Orange Cap and Purple Cap stats.</p>
+    <form action="{{ url_for('login') }}" method="POST" class="form-stack">
+      <input type="hidden" name="role" value="admin" />
+      <label>
+        Password
+        <input type="password" name="password" placeholder="Enter admin password" />
+      </label>
+      <button type="submit" class="primary-btn">Enter Admin Mode</button>
+    </form>
+  </div>
+
+  <div class="landing-card">
+    <h2>Continue as User</h2>
+    <p>Browse leaderboards with view-only access.</p>
+    <form action="{{ url_for('login') }}" method="POST">
+      <input type="hidden" name="role" value="user" />
+      <button type="submit" class="secondary-btn">Continue as User</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
