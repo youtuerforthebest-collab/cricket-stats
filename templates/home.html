@@ -2,25 +2,53 @@
 {% block content %}
 <section class="landing">
   <div class="landing-card">
-    <h2>Login as Admin</h2>
-    <p>Unlock editing for Orange Cap and Purple Cap stats.</p>
-    <form action="{{ url_for('login') }}" method="POST" class="form-stack">
-      <input type="hidden" name="role" value="admin" />
+    <h2>Create League</h2>
+    <p>Start a new league with its own stats and admin password.</p>
+    <form action="{{ url_for('league_create') }}" method="POST" class="form-stack">
       <label>
-        Password
-        <input type="password" name="password" placeholder="Enter admin password" />
+        League Name
+        <input type="text" name="league_name" placeholder="e.g., Mumbai Premier" />
       </label>
-      <button type="submit" class="primary-btn">Enter Admin Mode</button>
+      <label>
+        Admin Password
+        <input type="password" name="admin_password" placeholder="Set a password" />
+      </label>
+      <button type="submit" class="primary-btn">Create League</button>
     </form>
   </div>
 
   <div class="landing-card">
-    <h2>Continue as User</h2>
-    <p>Browse leaderboards with view-only access.</p>
-    <form action="{{ url_for('login') }}" method="POST">
-      <input type="hidden" name="role" value="user" />
-      <button type="submit" class="secondary-btn">Continue as User</button>
-    </form>
+    <h2>Find League</h2>
+    <p>Select a league to continue as admin or viewer.</p>
+    {% if leagues %}
+    <div class="league-list">
+      {% for league in leagues %}
+      <div class="league-item">
+        <div class="league-name">{{ league.name }}</div>
+        <div class="league-actions">
+          <form action="{{ url_for('league_login') }}" method="POST" class="inline-form">
+            <input type="hidden" name="league_id" value="{{ league.id }}" />
+            <input type="hidden" name="role" value="user" />
+            <button type="submit" class="secondary-btn small">View as User</button>
+          </form>
+          <form action="{{ url_for('league_login') }}" method="POST" class="inline-form admin-login">
+            <input type="hidden" name="league_id" value="{{ league.id }}" />
+            <input type="hidden" name="role" value="admin" />
+            <input type="password" name="password" placeholder="Admin password" />
+            <button type="submit" class="primary-btn small">Admin Login</button>
+          </form>
+          <form action="{{ url_for('league_delete') }}" method="POST" class="inline-form delete-league">
+            <input type="hidden" name="league_id" value="{{ league.id }}" />
+            <input type="password" name="password" placeholder="Admin password to delete" />
+            <button type="submit" class="danger-btn small">Delete League</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">No leagues yet. Create the first one!</div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}
