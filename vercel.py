@@ -30,10 +30,28 @@ def _ensure_data_file() -> None:
             json.dump({"leagues": {}}, f, indent=2)
 
 
+def _normalize_league(league: Dict) -> None:
+    for key in ("orange", "purple"):
+        current = league.get(key, {})
+        updated = {}
+        for player, value in current.items():
+            if isinstance(value, dict):
+                updated[player] = {
+                    "team": value.get("team", ""),
+                    "value": int(value.get("value", 0)),
+                }
+            else:
+                updated[player] = {"team": "", "value": int(value)}
+        league[key] = updated
+
+
 def _load_data() -> Dict[str, Dict]:
     _ensure_data_file()
     with open(DATA_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+    for league in data.get("leagues", {}).values():
+        _normalize_league(league)
+    return data
 
 
 def _save_data(data: Dict[str, Dict]) -> None:
@@ -211,7 +229,9 @@ def orange():
     data, league_id, league = _require_league()
     if not data:
         return redirect(url_for("home"))
-    leaderboard = sorted(league.get("orange", {}).items(), key=lambda item: item[1], reverse=True)
+    leaderboard = sorted(
+        league.get("orange", {}).items(), key=lambda item: item[1]["value"], reverse=True
+    )
     return render_template(
         "leaderboard.html",
         page_title="Orange Cap Leaderboard",
@@ -230,7 +250,9 @@ def purple():
     data, league_id, league = _require_league()
     if not data:
         return redirect(url_for("home"))
-    leaderboard = sorted(league.get("purple", {}).items(), key=lambda item: item[1], reverse=True)
+    leaderboard = sorted(
+        league.get("purple", {}).items(), key=lambda item: item[1]["value"], reverse=True
+    )
     return render_template(
         "leaderboard.html",
         page_title="Purple Cap Leaderboard",
@@ -261,6 +283,7 @@ def orange_add():
         return redirect(url_for("home"))
 
     name = request.form.get("name", "").strip()
+    team = request.form.get("team", "").strip()
     runs_ok, runs = _parse_int(request.form.get("value", ""))
     if not name or not runs_ok:
         flash("Enter a valid player name and numeric runs.", "error")
@@ -270,7 +293,7 @@ def orange_add():
         flash("Player already exists. Use edit to adjust runs.", "error")
         return redirect(url_for("orange"))
 
-    league["orange"][name] = runs
+    league["orange"][name] = {"team": team, "value": runs}
     _save_data(data)
     flash("Player added to Orange Cap leaderboard.", "success")
     return redirect(url_for("orange"))
@@ -295,7 +318,7 @@ def orange_edit():
         flash("Player not found. Add them first.", "error")
         return redirect(url_for("orange"))
 
-    league["orange"][name] += delta
+    league["orange"][name]["value"] += delta
     _save_data(data)
     flash("Orange Cap stats updated.", "success")
     return redirect(url_for("orange"))
@@ -320,7 +343,7 @@ def orange_adjust():
         flash("Player not found. Add them first.", "error")
         return redirect(url_for("orange"))
 
-    league["orange"][name] += delta
+    league["orange"][name]["value"] += delta
     _save_data(data)
     flash("Orange Cap stats updated.", "success")
     return redirect(url_for("orange"))
@@ -336,6 +359,7 @@ def purple_add():
         return redirect(url_for("home"))
 
     name = request.form.get("name", "").strip()
+    team = request.form.get("team", "").strip()
     wickets_ok, wickets = _parse_int(request.form.get("value", ""))
     if not name or not wickets_ok:
         flash("Enter a valid player name and numeric wickets.", "error")
@@ -345,7 +369,7 @@ def purple_add():
         flash("Player already exists. Use edit to adjust wickets.", "error")
         return redirect(url_for("purple"))
 
-    league["purple"][name] = wickets
+    league["purple"][name] = {"team": team, "value": wickets}
     _save_data(data)
     flash("Player added to Purple Cap leaderboard.", "success")
     return redirect(url_for("purple"))
@@ -370,7 +394,7 @@ def purple_edit():
         flash("Player not found. Add them first.", "error")
         return redirect(url_for("purple"))
 
-    league["purple"][name] += delta
+    league["purple"][name]["value"] += delta
     _save_data(data)
     flash("Purple Cap stats updated.", "success")
     return redirect(url_for("purple"))
@@ -395,7 +419,7 @@ def purple_adjust():
         flash("Player not found. Add them first.", "error")
         return redirect(url_for("purple"))
 
-    league["purple"][name] += delta
+    league["purple"][name]["value"] += delta
     _save_data(data)
     flash("Purple Cap stats updated.", "success")
     return redirect(url_for("purple"))
@@ -425,7 +449,7 @@ def orange_delete():
         return redirect(url_for("orange"))
 
     value = league["orange"].pop(name)
-    _append_delete_log(league, name, "Orange Cap", value)
+    _append_delete_log(league, name, "Orange Cap", value["value"])
     _save_data(data)
     flash("Player deleted from Orange Cap leaderboard.", "success")
     return redirect(url_for("orange"))
@@ -446,7 +470,7 @@ def purple_delete():
         return redirect(url_for("purple"))
 
     value = league["purple"].pop(name)
-    _append_delete_log(league, name, "Purple Cap", value)
+    _append_delete_log(league, name, "Purple Cap", value["value"])
     _save_data(data)
     flash("Player deleted from Purple Cap leaderboard.", "success")
     return redirect(url_for("purple"))

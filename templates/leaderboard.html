@@ -17,6 +17,10 @@
         <input type="text" name="name" placeholder="Player name" />
       </label>
       <label>
+        Team Name
+        <input type="text" name="team" placeholder="Team name" />
+      </label>
+      <label>
         {{ metric_label }}
         <input type="text" name="value" placeholder="Number" />
       </label>
@@ -53,6 +57,7 @@
         <tr>
           <th>Rank</th>
           <th>Player Name</th>
+          <th>Team</th>
           <th>Total {{ metric_label }}</th>
         </tr>
       </thead>
@@ -78,11 +83,12 @@
               {% endif %}
             </div>
           </td>
-          <td>{{ value }}</td>
+          <td>{{ value.team }}</td>
+          <td>{{ value.value }}</td>
         </tr>
         {% else %}
         <tr>
-          <td colspan="3" class="empty-state">No players yet. Add the first entry.</td>
+          <td colspan="4" class="empty-state">No players yet. Add the first entry.</td>
         </tr>
         {% endfor %}
       </tbody>

@@ -289,6 +289,10 @@ tr:hover .hover-actions {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding: 4px 6px;
+  border-radius: 999px;
+  background: #f3fbf2;
+  border: 1px solid #d6f0d3;
 }
 
 .adjust-form input[type="number"] {
@@ -297,16 +301,18 @@ tr:hover .hover-actions {
   border-radius: 8px;
   border: 1px solid #ded6c9;
   font-size: 13px;
+  background: #fff;
 }
 
 .adjust-btn {
   border: none;
-  background: #e5f7e4;
-  color: #1b6b24;
-  padding: 4px 8px;
+  background: linear-gradient(135deg, #35c96a, #1b6b24);
+  color: #fff;
+  padding: 6px 10px;
   border-radius: 999px;
   cursor: pointer;
   font-weight: 700;
+  box-shadow: 0 6px 16px rgba(27, 107, 36, 0.2);
 }
 
 .delete-btn {
