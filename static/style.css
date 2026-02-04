@@ -273,13 +273,40 @@ input {
   gap: 10px;
 }
 
-.delete-form {
+.hover-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
 
-tr:hover .delete-form {
+tr:hover .hover-actions {
   opacity: 1;
+}
+
+.adjust-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.adjust-form input[type="number"] {
+  width: 70px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #ded6c9;
+  font-size: 13px;
+}
+
+.adjust-btn {
+  border: none;
+  background: #e5f7e4;
+  color: #1b6b24;
+  padding: 4px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
 }
 
 .delete-btn {

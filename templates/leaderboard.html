@@ -64,10 +64,17 @@
             <div class="player-cell">
               <span>{{ name }}</span>
               {% if is_admin %}
-              <form action="/{{ route_prefix }}/delete" method="POST" class="delete-form">
-                <input type="hidden" name="name" value="{{ name }}" />
-                <button type="submit" class="delete-btn" title="Delete {{ name }}">✖</button>
-              </form>
+              <div class="hover-actions">
+                <form action="/{{ route_prefix }}/adjust" method="POST" class="adjust-form">
+                  <input type="hidden" name="name" value="{{ name }}" />
+                  <input type="number" name="delta" placeholder="+/-" />
+                  <button type="submit" class="adjust-btn" title="Add/Subtract">+</button>
+                </form>
+                <form action="/{{ route_prefix }}/delete" method="POST" class="delete-form">
+                  <input type="hidden" name="name" value="{{ name }}" />
+                  <button type="submit" class="delete-btn" title="Delete {{ name }}">✖</button>
+                </form>
+              </div>
               {% endif %}
             </div>
           </td>

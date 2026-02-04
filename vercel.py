@@ -301,6 +301,31 @@ def orange_edit():
     return redirect(url_for("orange"))
 
 
+@app.route("/orange/adjust", methods=["POST"])
+def orange_adjust():
+    if not _admin_guard():
+        return redirect(url_for("orange"))
+
+    data, league_id, league = _require_league()
+    if not data:
+        return redirect(url_for("home"))
+
+    name = request.form.get("name", "").strip()
+    delta_ok, delta = _parse_int(request.form.get("delta", ""))
+    if not name or not delta_ok:
+        flash("Enter a valid player name and numeric runs to add.", "error")
+        return redirect(url_for("orange"))
+
+    if name not in league["orange"]:
+        flash("Player not found. Add them first.", "error")
+        return redirect(url_for("orange"))
+
+    league["orange"][name] += delta
+    _save_data(data)
+    flash("Orange Cap stats updated.", "success")
+    return redirect(url_for("orange"))
+
+
 @app.route("/purple/add", methods=["POST"])
 def purple_add():
     if not _admin_guard():
@@ -328,6 +353,31 @@ def purple_add():
 
 @app.route("/purple/edit", methods=["POST"])
 def purple_edit():
+    if not _admin_guard():
+        return redirect(url_for("purple"))
+
+    data, league_id, league = _require_league()
+    if not data:
+        return redirect(url_for("home"))
+
+    name = request.form.get("name", "").strip()
+    delta_ok, delta = _parse_int(request.form.get("delta", ""))
+    if not name or not delta_ok:
+        flash("Enter a valid player name and numeric wickets to add.", "error")
+        return redirect(url_for("purple"))
+
+    if name not in league["purple"]:
+        flash("Player not found. Add them first.", "error")
+        return redirect(url_for("purple"))
+
+    league["purple"][name] += delta
+    _save_data(data)
+    flash("Purple Cap stats updated.", "success")
+    return redirect(url_for("purple"))
+
+
+@app.route("/purple/adjust", methods=["POST"])
+def purple_adjust():
     if not _admin_guard():
         return redirect(url_for("purple"))
 
